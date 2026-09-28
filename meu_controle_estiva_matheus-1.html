@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Meu Controle Estiva — Conta</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f5f7;color:#17202a;font-family:Arial,sans-serif}header{background:#111827;color:white;padding:20px 16px;border-radius:0 0 22px 22px}header h1{margin:0;font-size:23px}header p{margin:6px 0;color:#cbd5e1;font-size:13px}main{max-width:850px;margin:auto;padding:14px}.card{background:white;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px #0001}.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}.tabs button{border:0;border-radius:10px;padding:10px 3px;background:#e2e8f0;font-weight:bold}.tabs button.active{background:#111827;color:white}.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.box{background:#f8fafc;border-radius:12px;padding:12px}.box span{display:block;color:#64748b;font-size:12px}.box b{display:block;font-size:18px;margin-top:4px}.big{font-size:29px;font-weight:bold}.green{color:#15803d}.red{color:#b91c1c}.blue{color:#2563eb}.orange{color:#b45309}.muted{color:#64748b;font-size:12px;line-height:1.5}textarea{width:100%;height:230px;padding:11px;border:1px solid #d3dae2;border-radius:9px;font-size:13px;resize:vertical}input,select{width:100%;padding:11px;border:1px solid #d3dae2;border-radius:9px;font-size:15px;margin-top:5px}label{display:block;font-size:12px;font-weight:bold;margin-top:9px}.primary{width:100%;border:0;background:#111827;color:white;padding:13px;border-radius:10px;font-weight:bold;margin-top:11px}.hidden{display:none}.ok{background:#dcfce7;color:#166534;padding:10px;border-radius:9px;margin-top:10px;font-size:13px}.warn{background:#fff7ed;color:#9a3412;padding:10px;border-radius:9px;margin-top:10px;font-size:13px}.item{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #eee}.item small{display:block;color:#64748b;margin-top:3px}.editbtn{border:0;background:#e2e8f0;color:#111827;border-radius:7px;padding:7px 9px;font-weight:bold;margin-left:8px}.week{border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin:9px 0}
+
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;background:#f3f5f7}.login-card{width:100%;max-width:430px;background:white;border-radius:20px;padding:22px;box-shadow:0 4px 18px #0002}.login-card h1{margin:0 0 6px;font-size:24px}.login-card p{color:#64748b;font-size:13px;line-height:1.5}.login-card input{margin-top:6px}.login-card button{width:100%;border:0;background:#111827;color:white;padding:13px;border-radius:10px;font-weight:bold;margin-top:12px}.login-card .secondary{background:#e2e8f0;color:#111827}.login-card .msg{margin-top:10px;padding:10px;border-radius:9px;font-size:13px}.login-card .ok{background:#dcfce7;color:#166534}.login-card .warn{background:#fff7ed;color:#9a3412}.account-bar{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#eef2ff;padding:9px 12px;border-radius:10px;margin-bottom:12px;font-size:12px}.account-bar button{border:0;background:#111827;color:white;border-radius:8px;padding:7px 10px;font-weight:bold}</style></head><body>
+<div id="loginScreen" class="login-wrap">
+  <div class="login-card">
+    <h1>⚓ Meu Controle — Estiva</h1>
+    <p>Crie sua conta usando sua <b>matrícula da estiva</b>. Os lançamentos ficam separados por matrícula neste aparelho.</p>
+    <label>Nome completo</label>
+    <input id="loginNome" type="text" placeholder="Ex.: Matheus Eduardo dos Santos" value="Matheus Eduardo dos Santos">
+    <label>Matrícula da estiva</label>
+    <input id="loginMatricula" inputmode="numeric" maxlength="12" placeholder="Ex.: 17172" value="17172">
+    <label>Senha</label>
+    <input id="loginSenha" type="password" minlength="4" placeholder="Crie uma senha">
+    <label>Confirmar senha</label>
+    <input id="loginSenha2" type="password" minlength="4" placeholder="Repita a senha">
+    <button id="criarContaBtn">CRIAR CONTA / ENTRAR</button>
+    <div id="loginMsg"></div>
+    <p style="margin-bottom:0">Este arquivo não leva os dados desta conta para outra pessoa. Ao abrir em outro aparelho/navegador, os dados começam zerados e a pessoa poderá cadastrar sua própria conta.</p>
+  </div>
+</div>
+<div id="app" class="hidden">
+<header><h1>⚓ Meu Controle — Estiva</h1><p>Lançamentos • semanas • DAS • 13º • férias • gastos</p></header>
+<main>
+<div class="account-bar"><span>👤 <b id="nomeAtual"></b> • Matrícula: <b id="matriculaAtual"></b></span><button id="sairBtn">SAIR</button></div>
+<div class="card"><div class="muted">DINHEIRO LIVRE ESTIMADO</div><div id="free" class="big">R$ 0,00</div><div class="grid" style="margin-top:12px"><div class="box"><span>Total geral — Bruto</span><b id="gross">R$ 0,00</b></div><div class="box"><span>Líquido recebido</span><b id="liquid" class="green">R$ 0,00</b></div><div class="box"><span>Ficha 16% — 5º dia útil</span><b id="holeriteTotal" class="orange">R$ 0,00</b></div><div class="box"><span>Gastos</span><b id="expenses" class="red">R$ 0,00</b></div><div class="box"><span>13º + férias</span><b id="reserve" class="blue">R$ 0,00</b></div></div></div>
+
+<div class="tabs"><button class="active" onclick="show('holerite',this)">📥 Lançamento</button><button onclick="show('semana',this)">📅 Semanas</button><button onclick="show('mes',this)">📊 Mês</button><button onclick="show('config',this)">⚙️ Regras</button></div>
+
+<section id="holerite">
+<div class="card"><h3>📥 Colar holerite</h3><p class="muted">Cole o texto completo do recibo abaixo.</p><textarea id="texto" placeholder="Cole aqui o recibo da estiva..."></textarea><button class="primary" id="analisarBtn">🔎 ANALISAR FICHA</button></div>
+<div id="resultado" class="card hidden"><h3>🔎 Resultado</h3><div id="campos" class="grid"></div><div class="box" style="margin-top:10px">
+<label>Semana do lançamento</label>
+<select id="semanaManualAnalise">
+<option value="0">Automática pelo período</option>
+<option value="1">Semana 1</option>
+<option value="2">Semana 2</option>
+<option value="3">Semana 3</option>
+<option value="4">Semana 4</option>
+<option value="5">Semana 5</option>
+</select>
+<small>Você pode escolher manualmente a semana antes de salvar.</small>
+</div><div id="mensagem"></div><button class="primary" id="salvarBtn">✓ CONFIRMAR E SALVAR</button></div>
+</section>
+
+<section id="semana" class="hidden"><div class="card"><h3>📅 Controle semanal</h3><p class="muted">Regra: 1ª quarta = fechamento anterior; 2ª quarta = Semana 1; 3ª quarta = Semana 2; 4ª quarta = Semana 3; 5ª quarta = Semana 4. O período trabalhado é mostrado separadamente.</p><label>Mês</label><input id="mesSemana" type="month"><div id="semanas"></div></div></section>
+
+<section id="mes" class="hidden">
+<div class="card">
+<h3>📊 Fechamento mensal</h3>
+<label>Escolha o mês</label>
+<input id="mesFechamento" type="month">
+<div id="resumo"></div>
+<h3 style="margin-top:18px">📅 Resumo separado por mês</h3>
+<p class="muted">Cada mês fica separado. Ao trocar o mês, o fechamento e o histórico mostram somente os recebimentos daquele mês.</p>
+<div id="resumoMeses"></div>
+</div>
+<div class="card"><h3>📋 Histórico do mês selecionado</h3><div id="historico"></div></div>
+</section>
+
+<section id="config" class="hidden"><div class="card"><h3>⚙️ Regras</h3><div class="grid"><div><label>DAS total (%)</label><input id="dasVolta" type="number" step=".01"></div><div><label>Ficha 5º dia útil (%)</label><input id="dasQuinto" type="number" step=".01"></div><div><label>Desconto (%)</label><input id="dasDesconto" type="number" step=".01"></div><div><label>13º provisão (%)</label><input id="p13" type="number" step=".01"></div><div><label>Férias provisão (%)</label><input id="ferias" type="number" step=".01"></div></div><label>Limite mensal de gastos</label><input id="limite" type="number" step=".01"><button class="primary" id="salvarConfig">SALVAR REGRAS</button><p class="muted">Regra: DAS total = 27% do bruto, dividido em Desconto = 11% e Ficha = 16% do bruto, com a ficha referente ao 5º dia útil.</p></div></section>
+</main>
+</div>
+<script>
+var DB=null;
+var CONTA=null;
+var ACCOUNT_PREFIX="meuControleV4_conta_";
+var ACCOUNT_INDEX="meuControleV4_contas";
+var memoria={};
+function storageDisponivel(){
+  try{
+    var k="__estiva_test__";
+    localStorage.setItem(k,"1");
+    localStorage.removeItem(k);
+    return true;
+  }catch(e){return false}
+}
+function getStore(k){
+  try{if(storageDisponivel())return localStorage.getItem(k)}catch(e){}
+  return Object.prototype.hasOwnProperty.call(memoria,k)?memoria[k]:null;
+}
+function setStore(k,v){
+  try{if(storageDisponivel()){localStorage.setItem(k,v);return true}}catch(e){}
+  memoria[k]=v;return false;
+}
+function normalizarMatricula(v){return String(v||"").replace(/\D/g,"").trim()}
+function carregarConta(matricula){
+  var key=ACCOUNT_PREFIX+matricula;
+  var base={fichas:[],gastos:[],config:{dasVolta:27,dasQuinto:16,dasDesconto:11,p13:8.33,ferias:11.11,limite:4000}};
+  try{DB=JSON.parse(getStore(key)||"null")}catch(e){DB=null}
+  if(!DB)DB=JSON.parse(JSON.stringify(base));
+  if(!Array.isArray(DB.fichas))DB.fichas=[];
+  if(!Array.isArray(DB.gastos))DB.gastos=[];
+  DB.config=DB.config||JSON.parse(JSON.stringify(base.config));
+  if(DB.config.dasVolta==null)DB.config.dasVolta=27;
+  if(DB.config.dasDesconto==null)DB.config.dasDesconto=11;
+  if(DB.config.dasQuinto==null || DB.config.dasQuinto===11)DB.config.dasQuinto=16;
+  if(DB.config.p13==null)DB.config.p13=8.33;
+  if(DB.config.ferias==null)DB.config.ferias=11.11;
+  if(DB.config.limite==null)DB.config.limite=4000;
+  setStore(key,JSON.stringify(DB));
+}
+function listarContas(){
+  try{
+    var obj=JSON.parse(getStore(ACCOUNT_INDEX)||"{}");
+    Object.keys(obj).forEach(function(k){
+      if(typeof obj[k]==="string") obj[k]={senha:obj[k],nome:""};
+    });
+    return obj;
+  }catch(e){return {}}
+}
+function salvarContas(obj){setStore(ACCOUNT_INDEX,JSON.stringify(obj))}
+function mostrarLoginMsg(msg,tipo){$("loginMsg").innerHTML='<div class="msg '+(tipo||"warn")+'">'+msg+'</div>'}
+function entrarConta(){
+  var mat=normalizarMatricula($("loginMatricula").value), senha=$("loginSenha").value, senha2=$("loginSenha2").value;
+  if(!mat){mostrarLoginMsg("Informe sua matrícula da estiva.");return}
+  if(senha.length<4){mostrarLoginMsg("A senha precisa ter pelo menos 4 caracteres.");return}
+  if(senha!==senha2){mostrarLoginMsg("As senhas não conferem.");return}
+  var contas=listarContas();
+  var nome=($("loginNome")?.value||"Matheus Eduardo dos Santos").trim();
+  var hash=senha; // proteção simples local; não é autenticação de servidor
+  if(contas[mat] && ((typeof contas[mat]==="string" ? contas[mat] : contas[mat].senha)!==hash)){mostrarLoginMsg("Essa matrícula já possui uma conta neste aparelho e a senha não confere.");return}
+  contas[mat]={senha:hash,nome:nome};salvarContas(contas);
+  CONTA=mat;carregarConta(mat);
+  setStore("meuControleV4_ultimaConta",mat);
+  $("nomeAtual").textContent=nome;$("matriculaAtual").textContent=mat;$("loginScreen").classList.add("hidden");$("app").classList.remove("hidden");
+  if($("mesSemana"))$("mesSemana").value=new Date().toISOString().slice(0,7);
+  if($("mesFechamento"))$("mesFechamento").value=$("mesSemana").value;
+  render();
+}
+function sairConta(){CONTA=null;DB=null;$("app").classList.add("hidden");$("loginScreen").classList.remove("hidden");$("loginSenha").value="";$("loginSenha2").value="";mostrarLoginMsg("Você saiu. Entre novamente com sua matrícula e senha.","ok")}
+var fichaAtual=null;
+
+
+function $(id){return document.getElementById(id)}
+function money(n){return (Number(n)||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}
+function numBR(s){
+  if(s===null||s===undefined)return 0;
+  s=String(s).trim().replace(/R\$\s*/gi,"").replace(/\s/g,"");
+  if(!s)return 0;
+  // Aceita 1.300,00 / 1300,00 / 1300.00 e evita perder o milhar.
+  if(s.indexOf(",")>=0){
+    return Number(s.replace(/\./g,"").replace(",", "."))||0;
+  }
+  if(/^\d{1,3}(?:\.\d{3})+$/.test(s)){
+    return Number(s.replace(/\./g,""))||0;
+  }
+  return Number(s)||0;
+}
+function firstMoney(text,label){
+  var lines=String(text||"").split(/\r?\n/);
+  var alvo=String(label||"").toLowerCase().trim();
+  // Primeiro procura o valor imediatamente depois do rótulo.
+  for(var i=0;i<lines.length;i++){
+    var line=lines[i];
+    var low=line.toLowerCase();
+    var pos=low.indexOf(alvo);
+    if(pos<0)continue;
+    var after=line.slice(pos+alvo.length);
+    var m=after.match(/(?:R\$\s*)?\d+(?:\.\d{3})*,\d{2}|(?:R\$\s*)?\d+,\d{2}|(?:R\$\s*)?\d+(?:\.\d{3})+\.\d{2}|(?:R\$\s*)?\d+\.\d{2}/);
+    if(m)return numBR(m[0]);
+  }
+  // Fallback: procura em linhas que contenham o rótulo, mas pega o último valor
+  // da linha, evitando confundir "Base 300,00" com "Bruto 1.300,00".
+  for(var j=0;j<lines.length;j++){
+    var line2=lines[j];
+    if(line2.toLowerCase().indexOf(alvo)<0)continue;
+    var matches=line2.match(/(?:R\$\s*)?\d+(?:\.\d{3})*,\d{2}|(?:R\$\s*)?\d+,\d{2}|(?:R\$\s*)?\d+(?:\.\d{3})+\.\d{2}|(?:R\$\s*)?\d+\.\d{2}/g);
+    if(matches&&matches.length)return numBR(matches[matches.length-1]);
+  }
+  return 0;
+}
+function totalMoney(text, totalLabel, fallbackLabel){
+  var lines=String(text||"").split(/\r?\n/);
+  var alvo=String(totalLabel||"").toLowerCase().trim();
+
+  // Procura primeiro uma linha explicitamente TOTAL + valor.
+  for(var i=0;i<lines.length;i++){
+    var low=lines[i].toLowerCase();
+    if(low.indexOf(alvo)>=0){
+      var after=lines[i].slice(low.indexOf(alvo)+alvo.length);
+      var m=after.match(/(?:R\$\s*)?\d+(?:\.\d{3})*,\d{2}|(?:R\$\s*)?\d+,\d{2}/);
+      if(m)return numBR(m[0]);
+    }
+  }
+
+  // Fallback para recibos que escrevem o total como "TOTAL BRUTO" em
+  // uma linha e o número na linha seguinte.
+  for(var j=0;j<lines.length-1;j++){
+    if(lines[j].toLowerCase().indexOf(alvo)>=0){
+      var m2=lines[j+1].match(/(?:R\$\s*)?\d+(?:\.\d{3})*,\d{2}|(?:R\$\s*)?\d+,\d{2}/);
+      if(m2)return numBR(m2[0]);
+    }
+  }
+
+  return firstMoney(text,fallbackLabel);
+}
+
+function pagamento(text){
+  var m=text.match(/Data\s+Do\s+Pagamento\s*:\s*(\d{2}\/\d{2}\/\d{4})/i);
+  return m?m[1]:"";
+}
+function iso(d){var m=d.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);return m?m[3]+"-"+m[2]+"-"+m[1]:""}
+function semana(isoDate){
+  if(!isoDate)return 0;
+  var d=new Date(isoDate+"T12:00:00");
+  var y=d.getFullYear(), m=d.getMonth();
+  var primeiro=new Date(y,m,1,12,0,0);
+  var primeiraQuarta=new Date(y,m,1 + ((3-primeiro.getDay()+7)%7),12,0,0);
+  var numeroQuarta=Math.floor((d-primeiraQuarta)/(7*86400000))+1;
+  // 1ª quarta = fechamento anterior; 2ª quarta = Semana 1.
+  var semanaTrabalho=numeroQuarta-1;
+  if(semanaTrabalho<1)semanaTrabalho=1;
+  if(semanaTrabalho>5)semanaTrabalho=5;
+  return semanaTrabalho;
+}
+function periodoTexto(text){
+  var t=String(text||"");
+  // Formato em linha: "Período 13-19"
+  var m=t.match(/Per[ií]odo\s*[:\-]?\s*(\d{1,2})\s*[-–]\s*(\d{1,2})/i);
+  if(m)return m[1].padStart(2,"0")+"-"+m[2].padStart(2,"0");
+
+  // No holerite copiado da página, "Período" aparece como cabeçalho
+  // e os períodos aparecem depois dos registros. Pega todos os padrões
+  // de período do tipo 13-19, 19-01, 07-13.
+  var arr=[], re=/\b(\d{1,2})\s*[-–]\s*(\d{1,2})\b/g, x;
+  while((x=re.exec(t))!==null){
+    var a=parseInt(x[1],10), b=parseInt(x[2],10);
+    if(a>=1&&a<=31&&b>=1&&b<=31) arr.push(String(a).padStart(2,"0")+"-"+String(b).padStart(2,"0"));
+  }
+  return arr.length?arr.join(", "):"";
+}
+function semanaPeriodo(p){
+  if(!p)return 0;
+  var m=String(p).match(/^(\d{1,2})\s*[-–]\s*(\d{1,2})/);
+  if(!m)return 0;
+  var inicio=parseInt(m[1],10);
+  return inicio<=7?1:inicio<=14?2:inicio<=21?3:inicio<=28?4:5;
+}
+function chaveFicha(x){
+  return [x.data||"",x.periodo||"",Number(x.bruto||0).toFixed(2),Number(x.liquido||0).toFixed(2),Number(x.das||0).toFixed(2)].join("|");
+}
+function analisar(){
+  var text=$("texto").value;
+  if(!text.trim()){alert("Cole o texto da holerite primeiro.");return}
+  var data=pagamento(text), idata=iso(data);
+  var bruto=totalMoney(text,"TOTAL BRUTO","bruto"),inss=totalMoney(text,"TOTAL INSS","inss"),dasRecibo=totalMoney(text,"TOTAL DAS","das"),liquido=totalMoney(text,"TOTAL LIQUIDO","liquido"),fgts=totalMoney(text,"FGTS","fgts"),base=totalMoney(text,"TOTAL BASE","base"),ins=totalMoney(text,"TOTAL INSALUBRIDADE","insalubridade"),noturno=totalMoney(text,"TOTAL AD. NOTURNO","ad. noturno"),rsr=totalMoney(text,"TOTAL RSR","rsr");
+  var percentualFicha=Number(DB.config.dasQuinto||16);
+  var das=Number((bruto*(percentualFicha/100)).toFixed(2));
+  fichaAtual={data:data,iso:idata,periodo:periodoTexto(text),semanaManual:(document.getElementById("semanaManualAnalise")?Number(document.getElementById("semanaManualAnalise").value)||0:0),bruto:bruto,inss:inss,das:das,dasRecibo:dasRecibo,liquido:liquido,fgts:fgts,base:base,ins:ins,noturno:noturno,rsr:rsr};
+  var desconto=inss+das,calc=bruto-desconto,diff=Math.abs(calc-liquido);
+  var semanaRecibo=semana(idata); fichaAtual.semanaManual=semanaRecibo;
+  var arr=[["Data",data||"Não identificada"],["Período trabalhado",fichaAtual.periodo||"Não identificado"],["Semana",semanaRecibo?"Semana "+semanaRecibo:"Não identificada"],["Bruto",money(bruto)],["INSS",money(inss)],["Ficha 16% — 5º dia útil",money(das)],["Líquido recebido",money(liquido)],["FGTS",money(fgts)],["Base",money(base)],["Insalubridade",money(ins)],["Ad. noturno",money(noturno)],["RSR",money(rsr)]];
+  $("campos").innerHTML=arr.map(function(x){return '<div class="box"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>'}).join("");
+  if(!bruto||!liquido)$("mensagem").innerHTML='<div class="warn">⚠️ Não encontrei o bruto ou o líquido. Verifique se o texto foi copiado completo.</div>';
+  else if(diff<0.02)$("mensagem").innerHTML='<div class="ok">✓ Leitura conferida. A Ficha é calculada como '+percentualFicha+'% do bruto: '+money(das)+'. O DAS mostrado no recibo ('+money(dasRecibo)+') é mantido separado.</div>';
+  else $("mensagem").innerHTML='<div class="warn">⚠️ Leitura conferida, mas o cálculo bruto − INSS − holerite difere do líquido em '+money(diff)+'. Confira o recibo antes de salvar.</div>';
+  $("resultado").classList.remove("hidden");
+  $("resultado").scrollIntoView({behavior:"smooth"});
+}
+$("analisarBtn").onclick=analisar;
+$("salvarBtn").onclick=function(){
+  if(!fichaAtual)return;
+  var novaChave=chaveFicha(fichaAtual);
+  var duplicada=DB.fichas.some(function(x){return chaveFicha(x)===novaChave});
+  if(duplicada){
+    alert("⚠️ Essa holerite já está lançada no histórico. Não foi duplicada.");
+    return;
+  }
+  DB.fichas.unshift(fichaAtual);save();$("texto").value="";$("resultado").classList.add("hidden");fichaAtual=null;
+  alert("Ficha salva com sucesso.");
+};
+$("salvarConfig").onclick=function(){DB.config.dasVolta=+$("dasVolta").value||0;DB.config.dasQuinto=+$("dasQuinto").value||0;DB.config.dasDesconto=+$("dasDesconto").value||0;DB.config.p13=+$("p13").value||0;DB.config.ferias=+$("ferias").value||0;DB.config.limite=+$("limite").value||0;save();alert("Regras salvas.")};
+$("mesSemana").value=new Date().toISOString().slice(0,7);$("mesFechamento").value=$("mesSemana").value;
+$("mesSemana").onchange=render;$("mesFechamento").onchange=render;
+function save(){if(!CONTA||!DB)return;setStore(ACCOUNT_PREFIX+CONTA,JSON.stringify(DB));render()}
+function sum(a){return a.reduce(function(s,x){return s+(+x||0)},0)}
+function mesFicha(x){return x.iso?x.iso.slice(0,7):""}
+function editarFicha(i){
+  var x=DB.fichas[i];
+  if(!x)return;
+  var data=prompt("Data do pagamento (DD/MM/AAAA):",x.data||"");
+  if(data===null)return;
+  var periodo=prompt("Período trabalhado (ex.: 01-07):",x.periodo||"");
+  if(periodo===null)return;
+  var semanaAtual=x.semanaManual||semanaPeriodo(periodo)||semana(x.iso)||1;
+  var sem=prompt("Semana que deseja usar (1 a 5):",String(semanaAtual));
+  if(sem===null)return;
+  sem=parseInt(sem,10);
+  if(!sem||sem<1||sem>5){alert("Semana inválida. Use de 1 a 5.");return;}
+  var liquido=prompt("Líquido recebido:",String(x.liquido).replace(".",","));
+  if(liquido===null)return;
+  var holerite=prompt("Ficha 16% — 5º dia útil:",String(x.das).replace(".",","));
+  if(holerite===null)return;
+  var bruto=prompt("Bruto:",String(x.bruto).replace(".",","));
+  if(bruto===null)return;
+  x.data=data.trim();
+  x.iso=iso(x.data);
+  x.periodo=periodo.trim();
+  x.semanaManual=sem;
+  x.liquido=numBR(liquido);
+  x.das=numBR(holerite);
+  x.bruto=numBR(bruto);
+  save();
+  alert("✓ Histórico atualizado.");
+}
+function semanaAutomatica(i){
+  var x=DB.fichas[i];
+  if(!x)return;
+  x.semanaManual=0;
+  save();
+  render();
+}
+function removerFicha(i){
+  if(!confirm("Excluir este lançamento?"))return;
+  DB.fichas.splice(i,1);
+  save();
+}
+function render(){
+  DB.fichas.forEach(function(x){
+    if(!x.semanaManual)x.semanaManual=semanaPeriodo(x.periodo)||semana(x.iso)||1;
+    if(Number(x.bruto))x.das=Number((Number(x.bruto)*(Number(DB.config.dasQuinto||16)/100)).toFixed(2));
+  });
+  $("dasVolta").value=DB.config.dasVolta;$("dasQuinto").value=DB.config.dasQuinto;$("dasDesconto").value=DB.config.dasDesconto;$("p13").value=DB.config.p13;$("ferias").value=DB.config.ferias;$("limite").value=DB.config.limite;
+  var bruto=sum(DB.fichas.map(function(x){return x.bruto})),liq=sum(DB.fichas.map(function(x){return x.liquido})),holerite=sum(DB.fichas.map(function(x){return x.das})),g=sum(DB.gastos.map(function(x){return x.value})),prov=bruto*(DB.config.p13+DB.config.ferias)/100;
+  $("gross").textContent=money(bruto);$("liquid").textContent=money(liq);$("holeriteTotal").textContent=money(holerite);$("expenses").textContent=money(g);$("reserve").textContent=money(prov);$("free").textContent=money(liq-g-prov);
+  var m=$("mesFechamento").value,fs=DB.fichas.filter(function(x){return mesFicha(x)==m}),mg=sum(fs.map(function(x){return x.bruto})),ml=sum(fs.map(function(x){return x.liquido})),gp=mg*(DB.config.p13+DB.config.ferias)/100;
+  $("resumo").innerHTML='<div class="grid"><div class="box"><span>Bruto</span><b>'+money(mg)+'</b></div><div class="box"><span>Líquido recebido</span><b class="green">'+money(ml)+'</b></div><div class="box"><span>Ficha — desconto que volta</span><b class="orange">'+money(sum(fs.map(function(x){return x.das})))+'</b></div><div class="box"><span>13º + férias</span><b class="blue">'+money(gp)+'</b></div></div><div class="grid" style="margin-top:10px"><div class="box"><span>DAS 27% total</span><b class="orange">'+money(mg*DB.config.dasVolta/100)+'</b></div><div class="box"><span>Desconto 11%</span><b class="orange">'+money(mg*(DB.config.dasDesconto||11)/100)+'</b></div><div class="box"><span>Ficha 16% — 5º dia útil</span><b class="orange">'+money(mg*DB.config.dasQuinto/100)+'</b></div></div>';
+  var meses={};
+  DB.fichas.forEach(function(x){
+    var k=mesFicha(x);
+    if(!k)return;
+    if(!meses[k])meses[k]={bruto:0,liquido:0,holerite:0,fgts:0,qtd:0};
+    meses[k].bruto+=Number(x.bruto||0);
+    meses[k].liquido+=Number(x.liquido||0);
+    meses[k].holerite+=Number(x.das||0);
+    meses[k].fgts+=Number(x.fgts||0);
+    meses[k].qtd++;
+  });
+  var keys=Object.keys(meses).sort().reverse(),mesHtml="";
+  keys.forEach(function(k){
+    var z=meses[k],p=k.split("-"),dt=new Date(Number(p[0]),Number(p[1])-1,1,12,0,0);
+    var nome=dt.toLocaleDateString("pt-BR",{month:"long",year:"numeric"});
+    mesHtml+='<div class="week" style="margin-top:10px"><b>'+nome.charAt(0).toUpperCase()+nome.slice(1)+'</b><div class="grid" style="margin-top:8px"><div class="box"><span>Bruto do mês</span><b>'+money(z.bruto)+'</b></div><div class="box"><span>Líquido recebido</span><b class="green">'+money(z.liquido)+'</b></div><div class="box"><span>Ficha 16%</span><b class="orange">'+money(z.holerite)+'</b></div><div class="box"><span>13º + férias</span><b class="blue">'+money(z.bruto*((DB.config.p13+DB.config.ferias)/100))+'</b></div><div class="box"><span>FGTS</span><b class="blue">'+money(z.fgts)+'</b></div></div><p class="muted">'+z.qtd+' holerite(s)</p></div>';
+  });
+  $("resumoMeses").innerHTML=mesHtml||'<p class="muted">Nenhum holerite lançado.</p>';
+  var wm=$("mesSemana").value,wfs=DB.fichas.filter(function(x){return mesFicha(x)==wm}),html="";
+  for(var n=1;n<=5;n++){var ff=wfs.filter(function(x){return (x.semanaManual||semanaPeriodo(x.periodo)||semana(x.iso))==n});if(!ff.length)continue;var b=sum(ff.map(function(x){return x.bruto})),l=sum(ff.map(function(x){return x.liquido})),f=sum(ff.map(function(x){return x.das}));html+='<div class="week"><b>Semana '+n+'</b><div class="grid" style="margin-top:8px"><div class="box"><span>Bruto</span><b>'+money(b)+'</b></div><div class="box"><span>Líquido recebido</span><b class="green">'+money(l)+'</b></div><div class="box"><span>Ficha 16% — 5º dia útil</span><b class="orange">'+money(f)+'</b></div></div><p class="muted">'+ff.length+' holerite(s)</p></div>'}
+  $("semanas").innerHTML=html||'<p class="muted">Nenhuma holerite lançada neste mês.</p>';
+  $("historico").innerHTML=fs.length?fs.map(function(x){
+  var idx=DB.fichas.indexOf(x);
+  var sw=x.semanaManual||semanaPeriodo(x.periodo)||semana(x.iso);
+  return '<div class="item"><div><b>⚓ Lançamento</b><small>'+x.data+' • Período '+(x.periodo||"-")+' • Semana '+sw+' • Ficha: '+money(x.das)+'</small></div><div><b class="green">'+money(x.liquido)+'</b><button class="editbtn" onclick="editarFicha('+idx+')">✏️ Editar / Semana</button><button class="editbtn" onclick="removerFicha('+idx+')">🗑️</button></div></div>';
+}).join(""):"<span class='muted'>Nenhuma holerite neste mês.</span>";
+}
+function show(id,b){["holerite","semana","mes","config"].forEach(function(x){$(x).classList.toggle("hidden",x!=id)});document.querySelectorAll(".tabs button").forEach(function(x){x.classList.remove("active")});b.classList.add("active");render()}
+$("criarContaBtn").onclick=entrarConta;
+$("sairBtn").onclick=sairConta;
+$("loginSenha2").addEventListener("keydown",function(e){if(e.key==="Enter")entrarConta()});
+var ultima=normalizarMatricula(getStore("meuControleV4_ultimaConta")||"");
+if(ultima)$("loginMatricula").value=ultima;
+// A tela de login fica sempre visível até o usuário informar matrícula e senha.
+</script></body></html>
